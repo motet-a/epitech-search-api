@@ -330,15 +330,6 @@ function getUsersFromKeys(keys, callback) {
     }
 }
 
-app.get('/search-index/:query', (req, res) => {
-    getUsersFromKey(req.params.query, (err, users) => {
-        if (err)
-            return console.error(err);
-
-        res.json(users);
-    });
-});
-
 function getCompletionIndices(query, count, callback) {
     redisClient.zrank('compl', query, (err, rank) => {
         if (err) {
