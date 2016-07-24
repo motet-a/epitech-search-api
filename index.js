@@ -1,5 +1,7 @@
 "use strict";
 
+const config = require('./config');
+
 const express = require('express');
 const redis = require('redis');
 const httpRequest = require('request');
@@ -51,13 +53,13 @@ function wait(delay) {
     });
 }
 
-function fetchAFewUsers(location, year, course, offset) {
+function fetchAFewUsers(location, year, course, offset, count) {
     const url = 'https://intra.epitech.eu/user/filter/user' +
           '?format=' + 'json' +
           '&year=' + year +
           '&location=' + location +
           '&course=' + course +
-          '&count=' + 1000 +
+          '&count=' + count +
           '&offset=' + offset;
 
     return new Promise((resolve, reject) => {
@@ -69,7 +71,8 @@ function fetchAFewUsers(location, year, course, offset) {
                 if (error.code === 'ETIMEDOUT' ||
                     error.code === 'ESOCKETTIMEDOUT') {
                     return wait(1000 * 10).then(() => {
-                        return fetchAFewUsers(location, year, course, offset);
+                        return fetchAFewUsers(location, year, course,
+                                              offset, count);
                     });
                 }
                 reject(error);
@@ -89,7 +92,7 @@ function fetchAFewUsers(location, year, course, offset) {
             // requests. He'is lazy, and to do his job tires him, you
             // know. He's getting angry if we urge him too much. We
             // should wait for him slooooowly.
-            wait(1000 * 1).then(() => {
+            wait(1000 * 2).then(() => {
                 resolve(users);
             });
 
@@ -100,13 +103,16 @@ function fetchAFewUsers(location, year, course, offset) {
 }
 
 function fetchUsersRecursively(users, location, year, course, offset) {
-    return fetchAFewUsers(location, year, course, offset).then(result => {
+    const count = 10000;
+
+    return fetchAFewUsers(location, year, course, offset, count).then(result => {
         users = mergeUserArrays(users, result.items);
-        if (users.length >= result.items) {
+
+        if (result.items.length < count)
             return users;
-        }
-        return fetchUsersRecursively(users, location, year, course,
-                                     offset + result.items.length);
+
+        const newOffset = offset + result.items.length;
+        return fetchUsersRecursively(users, location, year, course, newOffset);
     });
 }
 
@@ -135,7 +141,6 @@ function fetchUsers(locations, years, courses) {
             }
         }
     }
-    console.log(combinations);
     return fetchAll(combinations);
 }
 
@@ -441,13 +446,12 @@ function flushRedisDb() {
 }
 
 function repopulateRedisDb() {
-    const firstYear = 2015;
     const years = [];
-    for (let y = firstYear; y < new Date().getFullYear() + 1; y++) {
+    for (let y = config.firstYear; y < new Date().getFullYear() + 1; y++) {
         years.push(y);
     }
 
-    return fetchUsers(['FR/LYN'], years, ['bachelor/classic']).then(users => {
+    return fetchUsers(config.locations, years, config.courses).then(users => {
         console.log(users.length + ' users fetched.');
 
         try {
