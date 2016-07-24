@@ -17,6 +17,7 @@
     "request": "^2.74.0"
   },
   "devDependencies": {
+    "mocha": "^2.5.3",
     "should": "^10.0.0",
     "supertest": "^1.2.0"
   }
