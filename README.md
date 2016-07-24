@@ -25,10 +25,10 @@ to access the `/compl` endpoint (for the autocompletion) and try some
 queries like
 [http://localhost:3000/compl?q=Antoine+Motet](http://localhost:3000/compl?q=Antoine+Motet).
 
-You can custom the configuration by editing `config.js` or by setting
+You can tweak the configuration by editing `config.js` or by setting
 the following environment variables:
 
-  - `EPITECH_SEARCH_REDIS_HOST`: The host for the Redis server. Defaults to `localhost`.
+  - `EPITECH_SEARCH_REDIS_HOST`: The host of the Redis server. Defaults to `localhost`.
 
 
 # Endpoints
