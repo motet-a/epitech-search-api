@@ -35,7 +35,7 @@ function get(path) {
 
 
 describe('epitech-search', function () {
-    this.timeout(10000);
+    this.timeout(1000 * 60);
 
     before((done) => {
         appModule.servePromise.then(done);
