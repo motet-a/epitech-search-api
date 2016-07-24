@@ -18,6 +18,7 @@ if (env === 'dev') {
 
 
 const app = express();
+
 const redisClient = redis.createClient({
     host: config.redisHost,
 });
@@ -283,6 +284,7 @@ app.get('/user/:login', (req, res) => {
             return
         }
 
+        res.set('Content-Type', 'application/json');
         res.send(user);
     });
 });
@@ -428,11 +430,32 @@ app.get('/compl', (req, res) => {
     });
 });
 
+app.use(function(req, res, next){
+    res.status(404);
+
+    if (req.accepts('html')) {
+        res.send('<h1>Not found</h1>');
+        return;
+    }
+
+    if (req.accepts('json')) {
+        res.send({
+            error: 'not_found'
+        });
+        return;
+    }
+
+    res.type('txt').send('Not found');
+});
+
 function serve() {
     const port = 3000;
 
-    app.listen(3000, () => {
-        console.log('Listening on port ' + port + '.');
+    return new Promise((resolve, reject) => {
+        app.listen(3000, () => {
+            console.log('Listening on port ' + port + '.');
+            resolve();
+        });
     });
 }
 
@@ -495,9 +518,20 @@ function repopulateRedisDb() {
 
 console.log('env: ' + env);
 
-repopulateRedisDb().then(() => {
-    serve();
-}, error => {
-    console.error(error);
-    redisClient.quit();
+const servePromise = new Promise(function (resolve, reject) {
+    repopulateRedisDb().then(() => {
+        serve().then(resolve);
+    }, error => {
+        console.error(error);
+        redisClient.quit();
+        reject();
+    });
 });
+
+
+
+module.exports = {
+    app,
+    config,
+    servePromise,
+};

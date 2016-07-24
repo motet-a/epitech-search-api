@@ -1,18 +1,23 @@
 {
   "name": "epitech-search-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "An API to search EPITECH students",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha"
   },
   "author": "motet-a",
   "license": "MIT",
+  "repository": "https://github.com/motet-a/epitech-search",
   "dependencies": {
     "express": "^4.14.0",
     "get-env": "^0.4.0",
     "promise": "^7.1.1",
     "redis": "^2.6.2",
     "request": "^2.74.0"
+  },
+  "devDependencies": {
+    "should": "^10.0.0",
+    "supertest": "^1.2.0"
   }
 }
