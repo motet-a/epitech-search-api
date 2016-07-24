@@ -18,7 +18,7 @@ require('promise/lib/rejection-tracking').enable();
 
 const app = express();
 const redisClient = redis.createClient({
-    host: '172.17.0.2',
+    host: config.redisHost,
 });
 
 redisClient.on('error', console.error);

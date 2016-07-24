@@ -12,6 +12,7 @@ module.exports = {
         ],
 
         defaultPort: 3000,
+        redisHost: '172.17.0.2',
     },
 
     dev: {
@@ -24,6 +25,7 @@ module.exports = {
         ],
 
         defaultPort: 3000,
+        redisHost: '172.17.0.2',
     },
 
 }
