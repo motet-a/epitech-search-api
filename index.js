@@ -15,12 +15,26 @@ if (env === 'dev') {
     require('promise/lib/rejection-tracking').enable();
 }
 
+(function () {
+
+    function get(varName) {
+        return process.env['EPITECH_SEARCH_' + varName];
+    }
+
+    if (get('REDIS_HOST')) {
+        config.redis.host = get('REDIS_HOST');
+    }
+
+    console.log('Config:');
+    console.log(config);
+})();
+
 
 
 const app = express();
 
 const redisClient = redis.createClient({
-    host: config.redisHost,
+    host: config.redis.host,
 });
 
 redisClient.on('error', console.error);
