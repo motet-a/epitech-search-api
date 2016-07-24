@@ -1,6 +1,10 @@
 "use strict";
 
-const config = require('./config');
+// `env` equals 'dev' or 'prod'
+const env = require('get-env')();
+
+const configModule = require('./config');
+const config = env === 'dev' ? configModule.dev : configModule.prod;
 
 const express = require('express');
 const redis = require('redis');
@@ -461,6 +465,7 @@ function repopulateRedisDb() {
         }
         console.log('No duplicated users.');
 
+        console.log('Creating indexes...')
         const index = createIndex(users);
         const complIndex = createAutocompleteIndex(index);
 
@@ -487,6 +492,7 @@ function repopulateRedisDb() {
 }
 
 
+console.log('env: ' + env);
 
 repopulateRedisDb().then(() => {
     serve();
