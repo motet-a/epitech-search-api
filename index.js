@@ -11,8 +11,9 @@ const redis = require('redis');
 const httpRequest = require('request');
 const Promise = require('promise');
 
-// TODO: Disable this in production
-require('promise/lib/rejection-tracking').enable();
+if (env === 'dev') {
+    require('promise/lib/rejection-tracking').enable();
+}
 
 
 
