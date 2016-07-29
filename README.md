@@ -1,6 +1,6 @@
-# epitech-search
+# epitech-search-api
 
-[![Build Status](https://travis-ci.org/motet-a/epitech-search.svg?branch=master)](https://travis-ci.org/motet-a/epitech-search)
+[![Build Status](https://travis-ci.org/motet-a/epitech-search-api.svg?branch=master)](https://travis-ci.org/motet-a/epitech-search-api)
 
 An API to search EPITECH students. Powered by Node.js, Express.js and
 Redis.
