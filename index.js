@@ -33,6 +33,12 @@ if (env === 'dev') {
 
 const app = express();
 
+function createNotFoundError() {
+    const e = new Error('not_found');
+    e.status = 404;
+    return e;
+}
+
 const redisClient = redis.createClient({
     host: config.redis.host,
 });
@@ -286,7 +292,7 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-app.get('/user/:login', (req, res) => {
+app.get('/user/:login', (req, res, next) => {
     redisClient.get('user:' + req.params.login, (err, user) => {
         if (err) {
             console.error(err);
@@ -294,8 +300,8 @@ app.get('/user/:login', (req, res) => {
         }
 
         if (!user) {
-            res.status(404).end();
-            return
+            next(createNotFoundError());
+            return;
         }
 
         res.set('Content-Type', 'application/json');
@@ -444,22 +450,23 @@ app.get('/compl', (req, res) => {
     });
 });
 
-app.use(function(req, res, next){
-    res.status(404);
 
-    if (req.accepts('html')) {
-        res.send('<h1>Not found</h1>');
-        return;
-    }
+
+app.use(function (req, res, next) {
+    next(createNotFoundError());
+});
+
+app.use(function(err, req, res, next){
+    res.status(err.status || 500);
 
     if (req.accepts('json')) {
-        res.send({
-            error: 'not_found'
+        res.json({
+            error: err.message,
         });
         return;
     }
 
-    res.type('txt').send('Not found');
+    res.type('txt').send(err.message);
 });
 
 function serve() {

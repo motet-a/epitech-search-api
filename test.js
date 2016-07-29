@@ -52,18 +52,17 @@ describe('epitech-search', function () {
             .end(() => done());
     });
 
-    it("should return a HTML error when the route doesn't exist", (done) => {
+    it("should return a text error when the route doesn't exist", (done) => {
         get('/eiuaeiuaeuia')
             .set('Accept', 'text/html')
             .expect(404)
-            .expect('Content-Type', /html/)
-            .expect(/Not found/)
+            .expect('Content-Type', /text\/plain/)
+            .expect(/not_found/)
             .end(() => done());
     });
 
     it("GET /user/:login", (done) => {
         get('/user/motet_a')
-            .expect(200)
             .expect('Content-Type', /json/)
             .expect({
                 login: 'motet_a',
@@ -71,6 +70,16 @@ describe('epitech-search', function () {
                 lastName: 'motet',
                 location: 'FR/LYN',
                 year: 2015,
+            })
+            .end(() => done());
+    });
+
+    it("GET /user/:login 404", (done) => {
+        get('/user/etsiruanetiurnateisru')
+            .expect(404)
+            .expect('Content-Type', /json/)
+            .expect({
+                error: 'not_found'
             })
             .end(() => done());
     });

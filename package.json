@@ -4,7 +4,7 @@
   "description": "An API to search EPITECH students",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha"
+    "test": "NODE_ENV=dev ./node_modules/.bin/mocha"
   },
   "author": "motet-a",
   "license": "MIT",
