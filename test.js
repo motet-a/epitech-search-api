@@ -84,4 +84,34 @@ describe('epitech-search', function () {
             .end(() => done());
     });
 
+    it("GET /compl with login", (done) => {
+        get('/compl?q=motet_a')
+            .expect('Content-Type', /json/)
+            .expect((res) => {
+                if (res.body[0].login !== 'motet_a')
+                    throw new Error('Expected motet_a as first result');
+            })
+            .end(() => done());
+    });
+
+    it("GET /compl with names", (done) => {
+        get('/compl?q=AnToInE+MotET')
+            .expect('Content-Type', /json/)
+            .expect((res) => {
+                if (res.body[0].login !== 'motet_a')
+                    throw new Error('Expected motet_a as first result');
+            })
+            .end(() => done());
+    });
+
+    it("GET /compl with date and an incomplete first name", (done) => {
+        get('/compl?q=motet+2015+antoin')
+            .expect('Content-Type', /json/)
+            .expect((res) => {
+                if (res.body[0].login !== 'motet_a')
+                    throw new Error('Expected motet_a as first result');
+            })
+            .end(() => done());
+    });
+
 });
