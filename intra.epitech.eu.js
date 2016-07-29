@@ -26,14 +26,22 @@ function wait(delay) {
     });
 }
 
+/**
+ * Returns `null` if the given server user is invalid
+ */
 function convertServerUser(serverUser, year) {
-    return {
+    const u = {
         login: serverUser.login,
         firstName: serverUser.prenom,
         lastName: serverUser.nom,
         location: serverUser.location,
         year,
-    }
+    };
+
+    if (!u.login || !u.firstName || !u.lastName || !u.year)
+        return null;
+
+    return u;
 }
 
 function fetchAFewUsers(location, year, course, offset, count) {
@@ -69,7 +77,7 @@ function fetchAFewUsers(location, year, course, offset, count) {
                 users.items = [];
             users.items = users.items.map(serverUser => {
                 return convertServerUser(serverUser, year);
-            });
+            }).filter(u => u !== null);
 
             // The poor EPITECH server doesn't like to handle too many
             // requests. He'is lazy, and to do his job tires him, you
