@@ -159,6 +159,14 @@ function createAutocompleteIndex(index) {
 
 
 
+app.use(function (req, res, next) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    return next();
+});
+
+
+
+
 app.get('/', (req, res) => {
     res.send('<h1>Hello World!</h1>' +
              '<a href="https://github.com/motet-a/epitech-search-api">' +

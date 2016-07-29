@@ -134,4 +134,11 @@ describe('epitech-search', function () {
             .end(() => done());
     });
 
+    it("should handle CORS requests", (done) => {
+        get('/user/motet_a')
+            .expect(200)
+            .expect('Access-Control-Allow-Origin', '*')
+            .end(() => done());
+    });
+
 });
