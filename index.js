@@ -16,6 +16,8 @@ if (env === 'dev') {
     require('promise/lib/rejection-tracking').enable();
 }
 
+
+
 (function () {
 
     function get(varName) {
@@ -28,6 +30,7 @@ if (env === 'dev') {
 
     console.log('Config:');
     console.log(config);
+
 })();
 
 
@@ -312,7 +315,14 @@ function getCompletions(query, callback) {
     }
 }
 
-app.get('/compl', (req, res) => {
+app.get('/compl', (req, res, next) => {
+    if (!req.query.q) {
+        const e = new Error('bad_request');
+        e.status = 400;
+        next(e);
+        return;
+    }
+
     getCompletions(req.query.q, (err, completions) => {
         if (err) {
             console.error(err);

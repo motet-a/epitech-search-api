@@ -74,12 +74,32 @@ describe('epitech-search', function () {
             .end(() => done());
     });
 
+    it("GET /user/ 404 with bad login", (done) => {
+        get('/user/')
+            .expect(404)
+            .expect('Content-Type', /json/)
+            .expect({
+                error: 'not_found'
+            })
+            .end(() => done());
+    });
+
     it("GET /user/:login 404", (done) => {
         get('/user/etsiruanetiurnateisru')
             .expect(404)
             .expect('Content-Type', /json/)
             .expect({
                 error: 'not_found'
+            })
+            .end(() => done());
+    });
+
+    it("GET /compl without parameters", (done) => {
+        get('/compl?')
+            .expect(400)
+            .expect('Content-Type', /json/)
+            .expect({
+                error: 'bad_request'
             })
             .end(() => done());
     });
