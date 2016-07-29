@@ -157,8 +157,13 @@ function createAutocompleteIndex(index) {
 
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send('<h1>Hello World!</h1>' +
+             '<a href="https://github.com/motet-a/epitech-search-api">' +
+             'https://github.com/motet-a/epitech-search-api' +
+             '</a>');
 });
+
+
 
 app.get('/user/:login', (req, res, next) => {
     redisClient.get('user:' + req.params.login, (err, user) => {
