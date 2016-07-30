@@ -13,7 +13,7 @@ module.exports = {
 
         defaultPort: 3000,
         redis: {
-            host: 'localhost',
+            host: 'redis',
         },
     },
 
@@ -33,7 +33,7 @@ module.exports = {
 
         defaultPort: 3000,
         redis: {
-            host: 'localhost',
+            host: 'redis',
         },
     },
 
