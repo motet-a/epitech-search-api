@@ -278,10 +278,22 @@ function getCompletionIndices(query, count, callback) {
     });
 }
 
+/** Returns a new array */
+function removeDuplicatedWords(words) {
+    const counts = {};
+    for (let word of words) {
+        counts[word] = (counts[word] || 0) + 1;
+    }
+    return words.filter(word => counts[word] == 1);
+}
+
 function getCompletions(query, callback) {
     query = query.toLowerCase().trim();
 
-    const words = query.split(' ');
+    const words = removeDuplicatedWords(query.split(' '));
+    if (words.length === 0)
+        return callback(null, []);
+
     const wordObjects = {};
 
     function getUserRankByKey(user, key) {

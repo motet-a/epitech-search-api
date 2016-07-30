@@ -145,6 +145,28 @@ describe('epitech-search', function () {
             .end(() => done());
     });
 
+    it("GET /compl with two keys", (done) => {
+        get('/compl?q=a+a')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .expect((res) => {
+                if (res.body.length !== 0)
+                    throw new Error('Expected no result');
+            })
+            .end(() => done());
+    });
+
+    it("GET /compl with many little keys", (done) => {
+        get('/compl?q=a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a+a')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .expect((res) => {
+                if (res.body.length !== 0)
+                    throw new Error('Expected no result');
+            })
+            .end(() => done());
+    });
+
     it("should handle CORS requests", (done) => {
         get('/user/motet_a')
             .expect(200)
