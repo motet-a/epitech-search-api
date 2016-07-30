@@ -1,0 +1,9 @@
+redis:
+    image: redis
+node:
+    build: .
+    dockerfile: Dockerfile.test
+    ports:
+        - "3000:3000"
+    links:
+        - redis
