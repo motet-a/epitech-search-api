@@ -18,6 +18,11 @@ module.exports = {
     },
 
     dev: {
+
+        /*
+         * Fetching user data from the API is really slow. In
+         * development mode, less users are fetched
+         */
         firstYear: 2015,
         locations: [
             'FR/LYN',

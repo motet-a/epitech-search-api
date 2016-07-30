@@ -195,7 +195,7 @@ app.get('/user/:login', (req, res, next) => {
     });
 });
 
-function getUsersFromKey(key, callback) {
+function getLoginsFromKey(key, callback) {
     redisClient.hget('index', key, (err, loginsString) => {
         if (err)
             return callback(err);
@@ -203,7 +203,53 @@ function getUsersFromKey(key, callback) {
         if (!loginsString)
             return callback(null, []);
 
-        const logins = loginsString.split(' ');
+        callback(null, loginsString.split(' '));
+    });
+}
+
+function getLoginsFromKeys(keys, callback) {
+    if (keys.length === 0)
+        return callback(null, []);
+
+    const loginCounts = {};
+    const processedKeys = [];
+
+    function reduce() {
+        let logins = [];
+
+        for (let login of Object.keys(loginCounts)) {
+            logins.push(login);
+        }
+
+        logins.sort((a, b) => loginCounts[b] - loginCounts[a]);
+
+        callback(null, logins.filter((login, i) => i < 20));
+    }
+
+    for (let key of keys) {
+        getLoginsFromKey(key, (err, logins) => {
+            if (err)
+                return callback(err);
+
+            for (let login of logins) {
+                if (loginCounts[login])
+                    loginCounts[login]++;
+                else
+                    loginCounts[login] = 1;
+            }
+
+            processedKeys.push(key);
+            if (processedKeys.length === keys.length)
+                reduce();
+        });
+    }
+}
+
+function getUsersFromKeys(keys, callback) {
+    getLoginsFromKeys(keys, (err, logins) => {
+        if (err)
+            return callback(err);
+
         const args = logins.map(l => 'user:' + l).concat((err, users) => {
             if (err)
                 return callback(err);
@@ -212,40 +258,6 @@ function getUsersFromKey(key, callback) {
         });
         redisClient.mget.apply(redisClient, args);
     });
-}
-
-function getUsersFromKeys(keys, callback) {
-    // MapReduce yeah :-D
-
-    if (keys.length === 0)
-        return callback(null, []);
-
-    const dict = {};
-
-    function reduce() {
-        let users = [];
-
-        function hasUser(user) {
-            return users.some(u => u.login === user.login);
-        }
-
-        for (let key of keys) {
-            const newUsers = dict[key].filter(u => !hasUser(u));
-            users = users.concat(newUsers);
-        }
-        callback(null, users);
-    }
-
-    for (let key of keys) {
-        getUsersFromKey(key, (err, users) => {
-            if (err)
-                return callback(err);
-
-            dict[key] = users;
-            if (Object.keys(dict).length === keys.length)
-                reduce();
-        });
-    }
 }
 
 function getCompletionIndices(query, count, callback) {
@@ -315,6 +327,7 @@ function getCompletions(query, callback) {
 
             const keys = indices
                   .filter(index => index.endsWith('*'))
+                  .filter((index, i) => i < 10)
                   .map(key => key.substring(0, key.length - 1));
 
             wordObjects[word] = {word, keys};
