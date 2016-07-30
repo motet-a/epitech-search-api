@@ -285,10 +285,17 @@ function getCompletions(query, callback) {
     const wordObjects = {};
 
     function getUserRankByKey(user, key) {
-        const userFields = ['firstName', 'lastName', 'login'];
+        const userFields = [
+            'firstName',
+            'lastName',
+            'login',
+            'year',
+            'location',
+        ];
+
         let rank = 0;
         for (let field of userFields) {
-            const value = user[field].toLowerCase();
+            const value = user[field].toString().toLowerCase();
             if (value.indexOf(key) !== -1 || key.indexOf(value) !== -1)
                 rank++;
         }
