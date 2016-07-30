@@ -1,9 +1,11 @@
 redis:
-    image: redis
+  image: redis
 node:
-    build: .
-    dockerfile: Dockerfile.test
-    ports:
-        - "3000:3000"
-    links:
-        - redis
+  environment:
+    - NODE_ENV=dev
+  build: .
+  dockerfile: Dockerfile.test
+  ports:
+    - "3000:3000"
+  links:
+    - redis

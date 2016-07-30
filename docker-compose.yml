@@ -1,8 +1,10 @@
 redis:
-    image: redis
+  image: redis
 node:
-    build: .
-    ports:
-        - "3000:3000"
-    links:
-        - redis
+  environment:
+    - NODE_ENV
+  build: .
+  ports:
+    - "3000:3000"
+  links:
+    - redis
