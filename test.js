@@ -134,6 +134,17 @@ describe('epitech-search', function () {
             .end(() => done());
     });
 
+    it("GET /compl with inexistent key", (done) => {
+        get('/compl?q=auieauieuiaeuiaeuaeeiuaeiuaeiu')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .expect((res) => {
+                if (res.body.length !== 0)
+                    throw new Error('Expected no result');
+            })
+            .end(() => done());
+    });
+
     it("should handle CORS requests", (done) => {
         get('/user/motet_a')
             .expect(200)

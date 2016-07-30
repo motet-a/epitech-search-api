@@ -250,12 +250,16 @@ function getUsersFromKeys(keys, callback) {
         if (err)
             return callback(err);
 
+        if (logins.length === 0)
+            return callback(null, []);
+
         const args = logins.map(l => 'user:' + l).concat((err, users) => {
             if (err)
                 return callback(err);
 
             callback(null, users.map(JSON.parse));
         });
+
         redisClient.mget.apply(redisClient, args);
     });
 }
