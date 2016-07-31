@@ -1,4 +1,4 @@
 FROM node:6-onbuild
 EXPOSE 3000
 
-CMD ["npm", "test"]
+CMD ["./node_modules/.bin/mocha"]
