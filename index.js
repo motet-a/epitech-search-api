@@ -11,7 +11,7 @@ const redis = require('redis');
 const Promise = require('promise');
 const transliterate = require('transliteration').transliterate;
 
-const {fetchUsers} = require('./intra.epitech.eu');
+const usersModule = require('./users');
 
 if (env === 'dev') {
     require('promise/lib/rejection-tracking').enable();
@@ -98,7 +98,7 @@ function saveAutocompleteIndexToRedis(index) {
 
 
 /** Returns the *big* hash map. Maps keys to lists of logins. */
-function createIndex(users, locationNames) {
+function createIndex(users) {
     const index = {};
 
     function add(key, login) {
@@ -126,7 +126,7 @@ function createIndex(users, locationNames) {
         add(user.lastName, login);
         add(user.year, login);
         add(user.location, login);
-        //add(locationNames[user.location], login);
+        add(user.course, login);
     }
 
     return index;
@@ -304,6 +304,7 @@ function getCompletions(query, callback) {
             'login',
             'year',
             'location',
+            'course',
         ];
 
         let rank = 0;
@@ -435,13 +436,8 @@ function assertNoDuplicatedUsers(users) {
 }
 
 function repopulateRedisDb() {
-    const years = [];
-    for (let y = config.firstYear; y < new Date().getFullYear() + 1; y++) {
-        years.push(y);
-    }
-
-    return fetchUsers(config.locations, years, config.courses).then(users => {
-        console.log(users.length + ' users fetched.');
+    return usersModule.read().then(users => {
+        console.log(users.length + ' users loaded.');
 
         try {
             assertNoDuplicatedUsers(users);

@@ -7,7 +7,11 @@ const httpRequest = require('request');
 function addUserToArray(users, newUser) {
     const oldUser = users.find(u => u.login === newUser.login);
     if (oldUser) {
-        oldUser.year = Math.min(oldUser.year, newUser.year);
+        if (oldUser.year < newUser.year) {
+            oldUser.course = newUser.course;
+        } else {
+            oldUser.year = newUser.year;
+        }
         return;
     }
     users.push(newUser);
@@ -29,13 +33,14 @@ function wait(delay) {
 /**
  * Returns `null` if the given server user is invalid
  */
-function convertServerUser(serverUser, year) {
+function convertServerUser(serverUser, location, year, course) {
     const u = {
         login: serverUser.login,
         firstName: serverUser.prenom,
         lastName: serverUser.nom,
-        location: serverUser.location,
+        location: location.name,
         year,
+        course,
     };
 
     if (!u.login || !u.firstName || !u.lastName || !u.year)
@@ -48,7 +53,7 @@ function fetchAFewUsers(location, year, course, offset, count) {
     const url = 'https://intra.epitech.eu/user/filter/user' +
           '?format=' + 'json' +
           '&year=' + year +
-          '&location=' + location +
+          '&location=' + location.code +
           '&course=' + course +
           '&count=' + count +
           '&offset=' + offset;
@@ -76,7 +81,7 @@ function fetchAFewUsers(location, year, course, offset, count) {
             if (!users.items)
                 users.items = [];
             users.items = users.items.map(serverUser => {
-                return convertServerUser(serverUser, year);
+                return convertServerUser(serverUser, location, year, course);
             }).filter(u => u !== null);
 
             // The poor EPITECH server doesn't like to handle too many
@@ -132,6 +137,7 @@ function fetchUsers(locations, years, courses) {
             }
         }
     }
+
     return fetchAll(combinations);
 }
 

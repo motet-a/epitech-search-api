@@ -1,7 +1,8 @@
 "use strict";
 
 
-const appModule = require('./index');
+let appModule; // Imported later since importing it starts the server
+const usersModule = require('./users');
 const supertest = require('supertest');
 const should = require('should');
 
@@ -12,11 +13,10 @@ function getBaseUrl() {
     return 'http://' + addr + ':' + port;
 }
 
-const url = getBaseUrl();
-
 
 function request(method, path) {
-    const r = supertest(url)[method](path);
+    const baseUrl = getBaseUrl();
+    const r = supertest(baseUrl)[method](path);
 
     const oldEnd = r.end;
 
@@ -38,7 +38,11 @@ describe('epitech-search', function () {
     this.timeout(1000 * 60);
 
     before((done) => {
-        appModule.servePromise.then(done);
+        usersModule.fetchAndSave().then(() => {
+            // Importing this module starts the server
+            appModule = require('./index');
+            appModule.servePromise.then(done);
+        });
     });
 
     it("should return a JSON error when the route doesn't exist", (done) => {
@@ -68,7 +72,8 @@ describe('epitech-search', function () {
                 login: 'motet_a',
                 firstName: 'antoine',
                 lastName: 'motet',
-                location: 'FR/LYN',
+                location: 'lyon',
+                course: 'bachelor/classic',
                 year: 2015,
             })
             .end(() => done());
