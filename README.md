@@ -31,6 +31,7 @@ the following environment variables:
   - `EPITECH_SEARCH_REDIS_HOST`: The host of the Redis server. Defaults to `localhost`.
 
 
+
 # Endpoints
 
 ### GET /user/:login
