@@ -9,6 +9,7 @@ const config = env === 'dev' ? configModule.dev : configModule.prod;
 const express = require('express');
 const redis = require('redis');
 const Promise = require('promise');
+const transliterate = require('transliteration').transliterate;
 
 const {fetchUsers} = require('./intra.epitech.eu');
 
@@ -288,7 +289,7 @@ function removeDuplicatedWords(words) {
 }
 
 function getCompletions(query, callback) {
-    query = query.toLowerCase().trim();
+    query = transliterate(query.toLowerCase().trim());
 
     const words = removeDuplicatedWords(query.split(' '));
     if (words.length === 0)

@@ -167,6 +167,17 @@ describe('epitech-search', function () {
             .end(() => done());
     });
 
+    it("GET /compl with accents", (done) => {
+        get('/compl?q=àñtôïné mÔtÊt')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .expect((res) => {
+                if (res.body[0].login !== 'motet_a')
+                    throw new Error('Expected motet_a as first result');
+            })
+            .end(() => done());
+    });
+
     it("should handle CORS requests", (done) => {
         get('/user/motet_a')
             .expect(200)
