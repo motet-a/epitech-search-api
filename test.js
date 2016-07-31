@@ -168,7 +168,7 @@ describe('epitech-search', function () {
     });
 
     it("GET /compl with accents", (done) => {
-        get('/compl?q=àñtôïné mÔtÊt')
+        get('/compl?q=%C3%A0%C3%B1t%C3%B4%C3%AFn%C3%A9%20m%C3%94t%C3%8At')
             .expect('Content-Type', /json/)
             .expect(200)
             .expect((res) => {
