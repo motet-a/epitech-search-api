@@ -68,7 +68,7 @@ function redisMultiToPromise(multi) {
 function saveUsersToRedis(users) {
     const multi = redisClient.multi();
 
-    for (let user of users) {
+    for (const user of users) {
         multi.set('user:' + user.login, JSON.stringify(user));
     }
 
@@ -78,7 +78,7 @@ function saveUsersToRedis(users) {
 function saveIndexToRedis(index) {
     const multi = redisClient.multi();
 
-    for (let key of Object.keys(index)) {
+    for (const key of Object.keys(index)) {
         multi.hset('index', key.toString(), index[key].join(' '));
     }
 
@@ -88,7 +88,7 @@ function saveIndexToRedis(index) {
 function saveAutocompleteIndexToRedis(index) {
     const multi = redisClient.multi();
 
-    for (let key of index) {
+    for (const key of index) {
         multi.zadd('compl', 0, key);
     }
 
@@ -114,7 +114,7 @@ function createIndex(users) {
         logins.push(login);
     }
 
-    for (let user of users) {
+    for (const user of users) {
         const login = user.login
         add(login, login);
         if (login.indexOf('_') !== -1) {
@@ -282,10 +282,10 @@ function getCompletionIndices(query, count, callback) {
 /** Returns a new array */
 function removeDuplicatedWords(words) {
     const counts = {};
-    for (let word of words) {
+    for (const word of words) {
         counts[word] = (counts[word] || 0) + 1;
     }
-    return words.filter(word => counts[word] == 1);
+    return words.filter(word => counts[word] === 1);
 }
 
 function getCompletions(query, callback) {
@@ -308,7 +308,7 @@ function getCompletions(query, callback) {
         ];
 
         let rank = 0;
-        for (let field of userFields) {
+        for (const field of userFields) {
             const value = user[field].toString().toLowerCase();
             if (value.indexOf(key) !== -1 || key.indexOf(value) !== -1)
                 rank++;
@@ -317,11 +317,9 @@ function getCompletions(query, callback) {
     }
 
     function getUserRank(user, keys) {
-        let rank = 0;
-        for (let key of keys) {
-            rank += getUserRankByKey(user, key);
-        }
-        return rank;
+        return keys.reduce(
+            (rank, key) => rank + getUserRankByKey(user, key),
+            0);
     }
 
     function reduce() {
@@ -334,8 +332,11 @@ function getCompletions(query, callback) {
             if (error)
                 return callback(error);
 
-            for (let user of users) {
+            for (const user of users) {
                 user.rank = getUserRank(user, keys);
+
+                // Increase the rank if the user data contains exactly
+                // a search word
                 user.rank += getUserRank(user, words) * 10;
             }
 
@@ -345,7 +346,7 @@ function getCompletions(query, callback) {
         });
     }
 
-    for (let word of words) {
+    for (const word of words) {
         getCompletionIndices(word, 42, (err, indices) => {
             if (err)
                 return callback(err);

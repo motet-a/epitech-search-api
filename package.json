@@ -6,6 +6,9 @@
   "author": "motet-a",
   "license": "MIT",
   "repository": "https://github.com/motet-a/epitech-search",
+  "scripts": {
+    "test": "./test.sh"
+  },
   "dependencies": {
     "express": "^4.14.0",
     "get-env": "^0.4.0",
